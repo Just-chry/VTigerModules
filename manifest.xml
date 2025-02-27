@@ -1,0 +1,489 @@
+<?xml version="1.0"?>
+<module>
+    <exporttime>2025-03-01 12:00:00</exporttime>
+
+    <!-- Informazioni base del modulo -->
+    <name>CarQuotes</name>
+    <label>CarQuotes</label>
+    <parent>Sales</parent>
+    <version>1.0</version>
+
+    <dependencies>
+        <vtiger_version>8.0.0</vtiger_version>
+        <vtiger_max_version>8.*</vtiger_max_version>
+    </dependencies>
+
+    <!-- Definizione tabelle (no item detail) -->
+    <tables>
+        <table>
+            <name>vtiger_carquotes</name>
+            <sql><![CDATA[
+                CREATE TABLE IF NOT EXISTS `vtiger_carquotes` (
+                  `carquoteid` INT(11) NOT NULL,
+                  `carquote_no` VARCHAR(100),
+                  `subject` VARCHAR(100),
+                  `quotestage` VARCHAR(200),
+                  `validtill` DATE,
+                  `potentialid` INT(11),
+                  `contactid` INT(11),
+                  `accountid` INT(11),
+                  `subtotal` DECIMAL(25,8),
+                  `adjustment` DECIMAL(25,8),
+                  `total` DECIMAL(25,8),
+                  `type` VARCHAR(100),
+                  `carrier` VARCHAR(200),
+                  `shipping` VARCHAR(100),
+                  `taxtype` VARCHAR(25),
+                  `discount_percent` DECIMAL(25,3),
+                  `discount_amount` DECIMAL(25,8),
+                  `s_h_amount` DECIMAL(25,8),
+                  `inventorymanager` INT(11),
+                  `terms_conditions` TEXT,
+                  `currency_id` INT(11) NOT NULL DEFAULT '1',
+                  `conversion_rate` DECIMAL(10,3) NOT NULL DEFAULT '1.000',
+                  `compound_taxes_info` TEXT,
+                  `pre_tax_total` DECIMAL(25,8),
+                  `s_h_percent` DECIMAL(25,3),
+                  `tags` VARCHAR(1),
+                  `region_id` INT(11),
+                  /* Campi personalizzati “noleggio” */
+                  `rental_company` VARCHAR(255),
+                  `km_included` VARCHAR(100),
+                  `brand` VARCHAR(100),
+                  `model` VARCHAR(100),
+                  `monthly_fee` DECIMAL(25,8),
+                  `deposit` DECIMAL(25,8),
+                  `plate_number` VARCHAR(50),
+                  `chassis_number` VARCHAR(100),
+                  `insurance_number` VARCHAR(100),
+                  PRIMARY KEY (`carquoteid`),
+                  CONSTRAINT `fk_carquotes_crmentity` FOREIGN KEY (`carquoteid`) 
+                    REFERENCES `vtiger_crmentity` (`crmid`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ]]>
+            </sql>
+        </table>
+
+        <table>
+            <name>vtiger_carquotesbillads</name>
+            <sql><![CDATA[
+                CREATE TABLE IF NOT EXISTS `vtiger_carquotesbillads` (
+                  `carquotebilladdressid` INT(11) NOT NULL,
+                  `bill_city` VARCHAR(40),
+                  `bill_code` VARCHAR(40),
+                  `bill_country` VARCHAR(40),
+                  `bill_state` VARCHAR(40),
+                  `bill_street` VARCHAR(250),
+                  `bill_pobox` VARCHAR(40),
+                  PRIMARY KEY (`carquotebilladdressid`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ]]>
+            </sql>
+        </table>
+
+        <table>
+            <name>vtiger_carquotesshipads</name>
+            <sql><![CDATA[
+                CREATE TABLE IF NOT EXISTS `vtiger_carquotesshipads` (
+                  `carquoteshipaddressid` INT(11) NOT NULL,
+                  `ship_city` VARCHAR(40),
+                  `ship_code` VARCHAR(40),
+                  `ship_country` VARCHAR(40),
+                  `ship_state` VARCHAR(40),
+                  `ship_street` VARCHAR(250),
+                  `ship_pobox` VARCHAR(40),
+                  PRIMARY KEY (`carquoteshipaddressid`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ]]>
+            </sql>
+        </table>
+
+        <table>
+            <name>vtiger_carquotescf</name>
+            <sql><![CDATA[
+                CREATE TABLE IF NOT EXISTS `vtiger_carquotescf` (
+                  `carquoteid` INT(11) NOT NULL,
+                  PRIMARY KEY (`carquoteid`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ]]>
+            </sql>
+        </table>
+    </tables>
+
+    <!-- Definizione blocchi e campi -->
+    <blocks>
+        <block>
+            <label>LBL_CARQUOTE_INFORMATION</label>
+            <fields>
+                <!-- Numero CarQuote -->
+                <field>
+                    <fieldname>carquote_no</fieldname>
+                    <uitype>4</uitype>
+                    <columnname>carquote_no</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>CarQuote No</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>1</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+                <!-- Subject -->
+                <field>
+                    <fieldname>subject</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>subject</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Subject</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>2</sequence>
+                    <typeofdata>V~M</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+                <!-- Potential -->
+                <field>
+                    <fieldname>potentialid</fieldname>
+                    <uitype>10</uitype>
+                    <columnname>potentialid</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Potential Name</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>3</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                    <relatedmodules>
+                        <relatedmodule>Potentials</relatedmodule>
+                    </relatedmodules>
+                </field>
+                <!-- Quote Stage -->
+                <field>
+                    <fieldname>quotestage</fieldname>
+                    <uitype>15</uitype>
+                    <columnname>quotestage</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Quote Stage</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>4</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                    <picklistvalues>
+                        <picklistvalue>Created</picklistvalue>
+                        <picklistvalue>Delivered</picklistvalue>
+                        <picklistvalue>Reviewed</picklistvalue>
+                        <picklistvalue>Accepted</picklistvalue>
+                        <picklistvalue>Rejected</picklistvalue>
+                    </picklistvalues>
+                </field>
+                <!-- Valid Till -->
+                <field>
+                    <fieldname>validtill</fieldname>
+                    <uitype>5</uitype>
+                    <columnname>validtill</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Valid Till</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>5</sequence>
+                    <typeofdata>D~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+                <!-- Contact Name -->
+                <field>
+                    <fieldname>contactid</fieldname>
+                    <uitype>10</uitype>
+                    <columnname>contactid</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Contact Name</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>6</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                    <relatedmodules>
+                        <relatedmodule>Contacts</relatedmodule>
+                    </relatedmodules>
+                </field>
+                <!-- Account Name -->
+                <field>
+                    <fieldname>accountid</fieldname>
+                    <uitype>10</uitype>
+                    <columnname>accountid</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Account Name</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>7</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                    <relatedmodules>
+                        <relatedmodule>Accounts</relatedmodule>
+                    </relatedmodules>
+                </field>
+                <!-- Subtotal, Adjustment, Total -->
+                <field>
+                    <fieldname>subtotal</fieldname>
+                    <uitype>71</uitype>
+                    <columnname>subtotal</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Sub Total</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>8</sequence>
+                    <typeofdata>N~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+                <field>
+                    <fieldname>adjustment</fieldname>
+                    <uitype>71</uitype>
+                    <columnname>adjustment</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Adjustment</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>9</sequence>
+                    <typeofdata>N~O</typeofdata>
+                </field>
+                <field>
+                    <fieldname>total</fieldname>
+                    <uitype>71</uitype>
+                    <columnname>total</columnname>
+                    <tablename>vtiger_carquotes</tablename>
+                    <fieldlabel>Total</fieldlabel>
+                    <presence>0</presence>
+                    <sequence>10</sequence>
+                    <typeofdata>N~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+                </fields>
+        </block>
+
+        <block>
+            <label>LBL_BILLING_AND_SHIPPING_ADDRESS</label>
+            <fields>
+                <!-- Billing Address -->
+                <field>
+                    <fieldname>bill_address</fieldname>
+                    <uitype>21</uitype>
+                    <columnname>bill_address</columnname>
+                    <tablename>vtiger_carquotesbillads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Billing Address</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>1</sequence>
+                    <typeofdata>V~M</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Shipping Address -->
+                <field>
+                    <fieldname>ship_address</fieldname>
+                    <uitype>21</uitype>
+                    <columnname>ship_address</columnname>
+                    <tablename>vtiger_carquotesshipads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Shipping Address</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>6</sequence>
+                    <typeofdata>V~M</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Billing City -->
+                <field>
+                    <fieldname>bill_city</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>bill_city</columnname>
+                    <tablename>vtiger_carquotesbillads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Billing City</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>2</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Billing State -->
+                <field>
+                    <fieldname>bill_state</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>bill_state</columnname>
+                    <tablename>vtiger_carquotesbillads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Billing State</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>3</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Billing Postal Code -->
+                <field>
+                    <fieldname>bill_code</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>bill_code</columnname>
+                    <tablename>vtiger_carquotesbillads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Billing Postal Code</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>4</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Billing Country -->
+                <field>
+                    <fieldname>bill_country</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>bill_country</columnname>
+                    <tablename>vtiger_carquotesbillads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Billing Country</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>5</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Shipping City -->
+                <field>
+                    <fieldname>ship_city</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>ship_city</columnname>
+                    <tablename>vtiger_carquotesshipads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Shipping City</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>7</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Shipping State -->
+                <field>
+                    <fieldname>ship_state</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>ship_state</columnname>
+                    <tablename>vtiger_carquotesshipads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Shipping State</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>8</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Shipping Postal Code -->
+                <field>
+                    <fieldname>ship_code</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>ship_code</columnname>
+                    <tablename>vtiger_carquotesshipads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Shipping Postal Code</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>9</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+
+                <!-- Shipping Country -->
+                <field>
+                    <fieldname>ship_country</fieldname>
+                    <uitype>2</uitype>
+                    <columnname>ship_country</columnname>
+                    <tablename>vtiger_carquotesshipads</tablename>
+                    <generatedtype>1</generatedtype>
+                    <fieldlabel>Shipping Country</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>10</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <displaytype>1</displaytype>
+                </field>
+            </fields>
+        </block>
+
+
+        <block>
+            <label>LBL_CUSTOM_INFORMATION</label>
+        </block>
+
+        <block>
+            <label>LBL_DESCRIPTION_INFORMATION</label>
+            <fields>
+                <field>
+                    <fieldname>description</fieldname>
+                    <uitype>19</uitype>
+                    <columnname>description</columnname>
+                    <tablename>vtiger_crmentity</tablename>
+                    <fieldlabel>Description</fieldlabel>
+                    <presence>2</presence>
+                    <sequence>1</sequence>
+                    <typeofdata>V~O</typeofdata>
+                    <maximumlength>999999</maximumlength>
+                    <quickcreate>1</quickcreate>
+                    <quickcreatesequence>0</quickcreatesequence>
+                    <displaytype>1</displaytype>
+                    <info_type>BAS</info_type>
+                    <masseditable>1</masseditable>
+                </field>
+            </fields>
+        </block>
+    </blocks>
+
+    <!-- Vista personalizzata -->
+    <customviews>
+        <customview>
+            <viewname>All</viewname>
+            <setdefault>true</setdefault>
+            <setmetrics>false</setmetrics>
+            <fields>
+                <field>
+                    <fieldname>carquote_no</fieldname>
+                    <columnindex>1</columnindex>
+                </field>
+                <field>
+                    <fieldname>subject</fieldname>
+                    <columnindex>2</columnindex>
+                </field>
+                <field>
+                    <fieldname>quotestage</fieldname>
+                    <columnindex>3</columnindex>
+                </field>
+                <field>
+                    <fieldname>total</fieldname>
+                    <columnindex>4</columnindex>
+                </field>
+            </fields>
+        </customview>
+    </customviews>
+
+    <sharingaccess>
+        <default>public_readwrite</default>
+    </sharingaccess>
+
+    <!-- Abilita Import/Export, DuplicatesHandling ecc. -->
+    <actions>
+        <action>
+            <name>Import</name>
+            <status>enabled</status>
+        </action>
+        <action>
+            <name>Export</name>
+            <status>enabled</status>
+        </action>
+        <action>
+            <name>DuplicatesHandling</name>
+            <status>enabled</status>
+        </action>
+    </actions>
+
+    <!-- Esempio di related list (Documenti) -->
+    <relatedlists>
+        <relatedlist>
+            <function>get_attachments</function>
+            <label>Documents</label>
+            <sequence>1</sequence>
+            <presence>0</presence>
+            <actions>
+                <action>ADD</action>
+                <action>SELECT</action>
+            </actions>
+            <relatedmodule>Documents</relatedmodule>
+        </relatedlist>
+    </relatedlists>
+</module>
