@@ -122,7 +122,7 @@
                     <columnname>carquote_no</columnname>
                     <tablename>vtiger_carquotes</tablename>
                     <generatedtype>1</generatedtype>
-                    <fieldlabel>CarQuote No</fieldlabel>
+                    <fieldlabel>CarQuote Number</fieldlabel>
                     <presence>0</presence>
                     <sequence>1</sequence>
                     <typeofdata>V~O</typeofdata>
